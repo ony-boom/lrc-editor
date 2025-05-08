@@ -1,9 +1,14 @@
-import type { ReactNode, ComponentRef } from "react";
-import { AudioDropzone } from "./audio-dropzone";
-import { AudioElement } from "./audio-element";
-import { AudioContext } from "../context/audio-context.ts";
-
 import { useRef } from "react";
+import { Editor } from "./editor";
+import { AddLyricButton } from "./add-lyric-button";
+import { enableMapSet } from "immer";
+
+import { AudioElement } from "./audio-element";
+import { AudioDropzone } from "./audio-dropzone";
+import type { ReactNode, ComponentRef } from "react";
+import { AudioContext } from "../context/audio-context";
+
+enableMapSet();
 
 export function AudioProvider({ children }: { children: ReactNode }) {
   const audioRef = useRef<ComponentRef<"audio">>(new Audio());
@@ -17,8 +22,10 @@ export function LrcEditor({ children }: LrcEditorProps) {
   return <AudioProvider>{children}</AudioProvider>;
 }
 
-LrcEditor.AudioDropzone = AudioDropzone;
+LrcEditor.Editor = Editor;
 LrcEditor.AudioElement = AudioElement;
+LrcEditor.AudioDropzone = AudioDropzone;
+LrcEditor.AddLyricButton = AddLyricButton;
 
 export type LrcEditorProps = {
   children?: ReactNode;

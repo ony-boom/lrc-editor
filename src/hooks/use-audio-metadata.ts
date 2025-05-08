@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import * as mm from "music-metadata";
-import { useEditorStore } from "../store";
+import { usePlayerStore } from "../store";
 
 export function useAudioMetadata() {
-  const audioFileSrc = useEditorStore((state) => state.audioSrc);
+  const audioFileSrc = usePlayerStore((state) => state.audioSrc);
   const [metadata, setMetadata] = useState<mm.IAudioMetadata["common"] | null>(
     null,
   );

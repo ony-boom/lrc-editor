@@ -1,8 +1,8 @@
 import type { ChangeEventHandler, ComponentProps } from "react";
-import { useEditorStore } from "../store";
+import { usePlayerStore } from "../store";
 
 export function AudioDropzone(props: AudioDropzoneProps) {
-  const setAudioSrc = useEditorStore((state) => state.setAudioSrc);
+  const setAudioSrc = usePlayerStore((state) => state.setAudioSrc);
 
   const handleChange: ChangeEventHandler<HTMLInputElement> = (event) => {
     const file = event.target.files?.[0];

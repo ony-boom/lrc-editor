@@ -1,62 +1,74 @@
 import { create } from "zustand/react";
 import { immer } from "zustand/middleware/immer";
+import { nanoid } from "nanoid";
 
-export type Lyrics = Map<string, number[]>;
+export type LyricLine = {
+  id: string;
+  timestamp: number;
+  line: string;
+};
 
 export type EditorStore = {
-  audioSrc: File | null;
-  lyrics: Lyrics;
+  lyrics: LyricLine[];
 
-  setAudioSrc: (file: File | null) => void;
-  addLyric: (lyric: string, time: number) => void;
-  removeLyric: (lyric: string) => void;
-  updateLyric: (lyric: string, times: number[]) => void;
+  addLyric: (timestamp: number, line: string) => void;
+  removeLyric: (id: string) => void;
+  updateLyric: (id: string, newLine: string, newTimestamp?: number) => void;
   clearLyrics: () => void;
+};
+
+export type PlayerStore = {
+  audioSrc: File | null;
+  duration: number;
+  position: number;
+  currentTime: number;
+  setAudioSrc: (file: File | null) => void;
 };
 
 export const useEditorStore = create<EditorStore>()(
   immer((set) => ({
-    audioSrc: null,
-    lyrics: new Map(),
+    lyrics: [],
 
-    setAudioSrc: (file) => {
+    addLyric: (timestamp, line) => {
+      const id = nanoid();
       set((state) => {
-        state.audioSrc = file;
+        state.lyrics.push({ id, timestamp, line });
+        state.lyrics.sort((a, b) => a.timestamp - b.timestamp);
       });
     },
 
-    addLyric: (lyric, time) => {
+    removeLyric: (id) => {
       set((state) => {
-        const current = (state.lyrics.get(lyric) ?? []) as number[];
-        if (!current.includes(time)) {
-          current.push(time);
-          current.sort((a, b) => a - b);
-          state.lyrics.set(lyric, current);
-        }
+        state.lyrics = state.lyrics.filter((lyric) => lyric.id !== id);
       });
     },
 
-    removeLyric: (lyric) => {
+    updateLyric: (id, newLine, newTimestamp) => {
       set((state) => {
-        state.lyrics.delete(lyric);
-      });
-    },
-
-    updateLyric: (lyric, times) => {
-      set((state) => {
-        if (Array.isArray(times) && times.length > 0) {
-          state.lyrics.set(
-            lyric,
-            [...times].sort((a, b) => a - b),
-          );
+        const lyric = state.lyrics.find((l) => l.id === id);
+        if (lyric) {
+          lyric.line = newLine;
+          if (newTimestamp !== undefined) {
+            lyric.timestamp = newTimestamp;
+          }
+          state.lyrics.sort((a, b) => a.timestamp - b.timestamp);
         }
       });
     },
 
     clearLyrics: () => {
       set((state) => {
-        state.lyrics.clear();
+        state.lyrics = [];
       });
     },
   })),
 );
+
+export const usePlayerStore = create<PlayerStore>()((set) => ({
+  duration: 0,
+  position: 0,
+  audioSrc: null,
+  currentTime: 0,
+
+  setAudioSrc: (file) => set({ audioSrc: file }),
+}));
