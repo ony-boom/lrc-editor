@@ -1,1 +1,0 @@
-# An unstyled lrc editor
