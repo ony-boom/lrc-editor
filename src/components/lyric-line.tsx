@@ -3,18 +3,28 @@ import { secondsToTimeInput } from "../utils";
 import { IMaskInput } from "react-imask";
 import { useEditorStore, usePlayerStore } from "../store";
 
+function isBetween(value: number, start: number, end: number) {
+  return value >= start && value < end;
+}
+
 export function LyricLine({
   id,
+  index = 0,
   lyricLine = "",
   timestamp = 0,
   ...rest
 }: LyricLineProps) {
   const removeLine = useEditorStore((state) => state.removeLyric);
   const updateLine = useEditorStore((state) => state.updateLyric);
-
+  const lyrics = useEditorStore((state) => state.lyrics);
+  const nextLine = lyrics[index + 1];
   const currentTime = usePlayerStore((state) => state.currentTime);
 
-  const isActive = timestamp <= currentTime && currentTime < timestamp + 5;
+  const isActive = isBetween(
+    currentTime,
+    timestamp,
+    nextLine ? nextLine.timestamp : Infinity,
+  );
 
   const handleRemove = () => {
     removeLine(id);
@@ -43,6 +53,7 @@ export function LyricLine({
 
 export type LyricLineProps = ComponentProps<"div"> & {
   id: string;
+  index?: number;
   lyricLine?: string;
   timestamp?: number;
 };

@@ -10,7 +10,7 @@ export function AddLyricButton({
 
   const handleClick: MouseEventHandler<HTMLButtonElement> = (event) => {
     const { currentTime } = getState();
-    addLyric(currentTime, "Edit to change line");
+    addLyric(currentTime, "Tap to change line");
 
     rest?.onClick?.(event);
   };

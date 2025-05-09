@@ -7,9 +7,15 @@ export function Editor(props: EditorProps) {
 
   return (
     <div {...props}>
-      {lyrics.map(({ id, timestamp, line }) => {
+      {lyrics.map(({ id, timestamp, line }, index) => {
         return (
-          <LyricLine id={id} key={id} lyricLine={line} timestamp={timestamp} />
+          <LyricLine
+            id={id}
+            key={id}
+            index={index}
+            lyricLine={line}
+            timestamp={timestamp}
+          />
         );
       })}
 
